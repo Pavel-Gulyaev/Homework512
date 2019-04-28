@@ -645,13 +645,6 @@
         android:id="@+id/imageSetter"
         android:background="@color/colorPrimaryDark">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.3"
-            android:id="@+id/choiseBtn"
-            android:text="@string/choiseBtn"/>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -671,7 +664,7 @@
             android:id="@+id/okBtn"
             android:text="@string/okBtn"/>
 
-        <Button2
+        <Button
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.3"

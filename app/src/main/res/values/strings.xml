@@ -29,8 +29,8 @@
     <string name="x_y">x^y</string>
     <string name="exp">exp</string>
     <string name="ln">ln</string>
-    <string name="change_image_text">Или введите адрес изображения</string>
+    <string name="change_image_text">Введите адрес изображения</string>
     <string name="okBtn">OK</string>
     <string name="cancelBtn">Я передумал</string>
-    <string name="choiseBtn">Выбрать изображение</string>
+
 </resources>

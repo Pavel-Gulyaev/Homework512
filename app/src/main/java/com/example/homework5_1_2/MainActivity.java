@@ -1,12 +1,17 @@
 package com.example.homework5_1_2;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
@@ -24,27 +29,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     LinearLayout imageSetter;
     ImageView background;
-    Bitmap image;
-    EditText imageAdress;
+
+    EditText imageName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        int permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (!(permissionStatus == PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    1);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button change = (Button) findViewById(R.id.changeBtn);
-        Button imageChanger = (Button) findViewById(R.id.imageBtn);
-        imageSetter = (LinearLayout) findViewById(R.id.imageSetter);
-        background = (ImageView) findViewById(R.id.background);
-        imageAdress = (EditText) findViewById(R.id.imageAdress);
+        Button change = findViewById(R.id.changeBtn);
+        Button imageChanger = findViewById(R.id.imageBtn);
+        imageSetter = findViewById(R.id.imageSetter);
+        background = findViewById(R.id.background);
+        imageName = findViewById(R.id.imageAdress);
         imageChanger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageSetter.setVisibility(View.VISIBLE);
             }
         });
-        Button cancelBtn = (Button) findViewById(R.id.cancelBtn);
-        Button okBtn = (Button) findViewById(R.id.okBtn);
-        Button choiseBtn = (Button) findViewById(R.id.choiseBtn);
+        Button cancelBtn = findViewById(R.id.cancelBtn);
+        Button okBtn = findViewById(R.id.okBtn);
+
 
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,17 +63,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 clearForm();
             }
         });
-        choiseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                choiseImage();
-                clearForm();
-            }
-        });
+
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                changeImage(imageAdress.getText().toString());
+                changeImage(imageName.getText().toString());
                 clearForm();
             }
         });
@@ -134,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void changeImage(String adress){
 
-        File imgFile = new File(adress);
+        File imgFile = getImage(adress);
 
         if(imgFile.exists()) {
 
@@ -152,38 +157,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void choiseImage(){
-        Intent i = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        final int ACTIVITY_SELECT_IMAGE = 1234;
-        startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
-
+    public File getImage(String imageName){
+        File image = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), imageName);
+        return image;
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-        switch(requestCode) {
-            case 1234:
-                if(resultCode == RESULT_OK){
-                    Uri selectedImage = data.getData();
-                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                    Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-
-                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                    String filePath = cursor.getString(columnIndex);
-                    cursor.close();
-
-
-                    image = BitmapFactory.decodeFile(filePath);
-                    background.setImageBitmap(image);
-
-                }
-        }
-
-    };
 
     private void clearForm(){
         imageSetter.setVisibility(View.GONE);
